@@ -1,0 +1,48 @@
+ifdef::env-github,env-browser[:context: cmd]
+[id='ref-rhoas_{context}']
+= rhoas
+
+[role="_abstract"]
+RHOAS CLI
+
+[discrete]
+== Synopsis
+
+Manage your application services directly from the command line.
+
+[discrete]
+== Examples
+
+....
+# authenticate securely through your web browser
+$ rhoas login
+
+# create a Kafka instance
+$ rhoas kafka create my-kafka-cluster
+
+# create a service account and save credentials to a JSON file
+$ rhoas service-account create -o json
+
+# connect your Kubernetes/OpenShift cluster to a service
+$ rhoas cluster connect
+
+....
+
+[discrete]
+== Options
+
+  `-h`, `--help`::      Show help for a command
+  `-v`, `--verbose`::   Enable verbose mode
+      `--version`::     Show rhoas version
+
+[discrete]
+== See also
+
+
+ifdef::env-github,env-browser[]
+* link:rhoas_service-registry.adoc#rhoas-service-registry[rhoas service-registry]	 - [Preview] Service Registry commands
+endif::[]
+ifdef::pantheonenv[]
+* link:{path}#ref-rhoas-service-registry_{context}[rhoas service-registry]	 - [Preview] Service Registry commands
+endif::[]
+
