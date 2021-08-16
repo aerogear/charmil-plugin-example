@@ -42,16 +42,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	rootCmd := root.NewRootCommand(cmdFactory, buildVersion)
+	RootCmd := root.NewRootCommand(cmdFactory, buildVersion)
 
-	rootCmd.InitDefaultHelpCmd()
+	RootCmd.InitDefaultHelpCmd()
 
 	if generateDocs {
-		generateDocumentation(rootCmd)
+		generateDocumentation(RootCmd)
 		os.Exit(0)
 	}
 
-	err = rootCmd.Execute()
+	err = RootCmd.Execute()
 	if err == nil {
 		if debug.Enabled() {
 			build.CheckForUpdate(context.Background(), logger, localizer)
