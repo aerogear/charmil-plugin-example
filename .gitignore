@@ -18,3 +18,5 @@ node_modules
 /*.properties
 .idea/
 .vscode/settings.json
+!.golangci.yaml
+!.goreleaser.yml
