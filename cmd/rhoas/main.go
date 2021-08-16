@@ -20,6 +20,8 @@ import (
 )
 
 var generateDocs = os.Getenv("GENERATE_DOCS") == "true"
+var cmdFactory *factory.Factory
+var buildVersion string
 
 func main() {
 	localizer, err := goi18n.New(nil)
@@ -28,8 +30,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	buildVersion := build.Version
-	cmdFactory := factory.New(build.Version, localizer)
+	buildVersion = build.Version
+	cmdFactory = factory.New(build.Version, localizer)
 	logger, err := cmdFactory.Logger()
 	if err != nil {
 		fmt.Println(cmdFactory.IOStreams.ErrOut, err)
@@ -42,7 +44,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	RootCmd := root.NewRootCommand(cmdFactory, buildVersion)
+	RootCmd := RootCmd()
 
 	RootCmd.InitDefaultHelpCmd()
 
@@ -64,6 +66,10 @@ func main() {
 		build.CheckForUpdate(context.Background(), logger, localizer)
 		os.Exit(1)
 	}
+}
+
+func RootCmd() *cobra.Command {
+	return root.NewRootCommand(cmdFactory, buildVersion)
 }
 
 /**
