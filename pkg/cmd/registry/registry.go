@@ -8,11 +8,19 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
+	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/spf13/cobra"
 )
 
 func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
+
+	var err error
+	f.Localizer, err = goi18n.New(nil)
+	if err != nil {
+		panic(err)
+	}
+
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),

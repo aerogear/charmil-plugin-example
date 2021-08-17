@@ -12,6 +12,7 @@ import (
 )
 
 func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
+
 	cmd := &cobra.Command{
 		SilenceUsage:  true,
 		SilenceErrors: true,
