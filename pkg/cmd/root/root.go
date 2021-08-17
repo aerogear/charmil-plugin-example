@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
+	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/arguments"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
@@ -12,6 +13,12 @@ import (
 )
 
 func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
+	var err error
+	f.Localizer, err = goi18n.New(nil)
+	if err != nil {
+		panic(err)
+	}
+
 	cmd := &cobra.Command{
 		SilenceUsage:  true,
 		SilenceErrors: true,
