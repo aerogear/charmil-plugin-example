@@ -2,17 +2,32 @@
 package registry
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/aerogear/charmil-plugin-example/internal/build"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/create"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/delete"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
+	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/spf13/cobra"
 )
 
 func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
+
+	localizer, err := goi18n.New(nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	cmdFactory := factory.New(build.Version, localizer)
+	f = cmdFactory
+
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),
