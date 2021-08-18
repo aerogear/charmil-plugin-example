@@ -33,7 +33,7 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	}
 
 	cmdFactory := factory.New(build.Version, localizer)
-	f = cmdFactory
+	f.Localizer = cmdFactory.Localizer
 
 	cmd := &cobra.Command{
 		Use:         "service-registry",
