@@ -164,7 +164,7 @@ func runCreate(opts *Options) error {
 
 	if opts.autoUse {
 		logger.Infoln("Auto-use is set, updating the current instance")
-		cfg.Services.ServiceRegistry = registryConfig
+		cfg.ServiceRegistry = registryConfig
 		if err := opts.Config.Save(cfg); err != nil {
 			return fmt.Errorf("%v: %w", opts.localizer.LocalizeByID("registry.cmd.create.error.couldNotUse"), err)
 		}

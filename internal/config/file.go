@@ -102,7 +102,7 @@ func (c *File) Location() (path string, err error) {
 		if err != nil {
 			return "", err
 		}
-		path = filepath.Join(rhoasCfgDir, "config.json")
+		path = filepath.Join(rhoasCfgDir, "plugin_config.json")
 		if err != nil {
 			return "", err
 		}
