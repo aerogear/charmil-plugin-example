@@ -1,7 +1,6 @@
 package status
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"reflect"
@@ -9,11 +8,8 @@ import (
 	"text/tabwriter"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/kafka/kafkaerr"
-	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
 	"github.com/aerogear/charmil-plugin-example/internal/config"
-	kas "github.com/aerogear/charmil-plugin-example/pkg/api/kas"
 	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/openconfig/goyang/pkg/indent"
 )
@@ -39,43 +35,6 @@ type Options struct {
 
 	// request specific services
 	Services []string
-}
-
-// Get gets the status of all services currently set in the user config
-func Get(ctx context.Context, opts *Options) (status *Status, ok bool, err error) {
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return nil, false, err
-	}
-	logger, err := opts.Logger()
-	if err != nil {
-		return nil, false, err
-	}
-
-	status = &Status{}
-	api := opts.Connection.API()
-
-	if stringInSlice("kafka", opts.Services) {
-		kafkaCfg := cfg.Services.Kafka
-		if cfg.HasKafka() {
-			// nolint:govet
-			kafkaStatus, err := getKafkaStatus(ctx, api.Kafka(), kafkaCfg.ClusterID)
-			if err != nil {
-				if kas.IsErr(err, kas.ErrorNotFound) {
-					err = kafkaerr.NotFoundByIDError(kafkaCfg.ClusterID)
-					logger.Error(err)
-					logger.Info(`Run "rhoas kafka use" to use another Kafka instance.`)
-				}
-			} else {
-				status.Kafka = kafkaStatus
-				ok = true
-			}
-		} else {
-			logger.Infoln("No Kafka instance is currently used, skipping status check")
-		}
-	}
-
-	return status, ok, err
 }
 
 // Print prints the status information of all set services
@@ -167,36 +126,4 @@ func createDivider(n int) string {
 	}
 
 	return b
-}
-
-func getKafkaStatus(ctx context.Context, api kafkamgmtclient.DefaultApi, id string) (status *KafkaStatus, err error) {
-	kafkaResponse, _, err := api.GetKafkaById(ctx, id).Execute()
-	if kas.IsErr(err, kas.ErrorNotFound) {
-		return nil, kafkaerr.NotFoundByIDError(id)
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	status = &KafkaStatus{
-		ID:                  kafkaResponse.GetId(),
-		Name:                kafkaResponse.GetName(),
-		Status:              kafkaResponse.GetStatus(),
-		BootstrapServerHost: kafkaResponse.GetBootstrapServerHost(),
-	}
-
-	if kafkaResponse.GetStatus() == "failed" {
-		status.FailedReason = kafkaResponse.GetFailedReason()
-	}
-
-	return status, err
-}
-
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }

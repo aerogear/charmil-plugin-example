@@ -117,7 +117,7 @@ func runUse(opts *Options) error {
 	}
 
 	nameTmplEntry := localize.NewEntry("Name", registry.GetName())
-	cfg.Services.ServiceRegistry = registryConfig
+	cfg.ServiceRegistry = registryConfig
 	if err := opts.Config.Save(cfg); err != nil {
 		saveErrMsg := opts.localizer.LocalizeByID("registry.use.error.saveError", nameTmplEntry)
 		return fmt.Errorf("%v: %w", saveErrMsg, err)

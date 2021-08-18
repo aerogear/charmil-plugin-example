@@ -73,11 +73,11 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			var registryConfig *config.ServiceRegistryConfig
-			if cfg.Services.ServiceRegistry == registryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
+			if cfg.ServiceRegistry == registryConfig || cfg.ServiceRegistry.InstanceID == "" {
 				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = cfg.Services.ServiceRegistry.InstanceID
+			opts.id = cfg.ServiceRegistry.InstanceID
 
 			return runDescribe(opts)
 		},
