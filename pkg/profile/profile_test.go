@@ -6,11 +6,19 @@ import (
 	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/internal/mockutil"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"golang.org/x/text/language"
 )
 
 func TestEnableDevPreviewConfig(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, _ := localize.New(locConfig)
 	testVal := true
 	factoryObj := factory.New("dev", localizer)
 
@@ -35,7 +43,13 @@ func TestEnableDevPreviewConfig(t *testing.T) {
 }
 
 func TestDevPreviewEnabled(t *testing.T) {
-	localizer, _ := goi18n.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, _ := localize.New(locConfig)
 	factoryObj := factory.New("dev", localizer)
 	factoryObj.Config = mockutil.NewConfigMock(&config.Config{})
 	testVal := false

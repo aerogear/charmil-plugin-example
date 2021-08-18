@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/color"
 	"github.com/aerogear/charmil-plugin-example/pkg/dump"
+	"github.com/aerogear/charmil/core/utils/color"
 
 	"github.com/AlecAivazis/survey/v2"
 

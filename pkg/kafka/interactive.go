@@ -6,7 +6,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 )
 
