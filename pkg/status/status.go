@@ -14,7 +14,7 @@ import (
 
 	"github.com/aerogear/charmil-plugin-example/internal/config"
 	kas "github.com/aerogear/charmil-plugin-example/pkg/api/kas"
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/openconfig/goyang/pkg/indent"
 )
 
@@ -71,7 +71,7 @@ func Get(ctx context.Context, opts *Options) (status *Status, ok bool, err error
 				ok = true
 			}
 		} else {
-			logger.Debug("No Kafka instance is currently used, skipping status check")
+			logger.Infoln("No Kafka instance is currently used, skipping status check")
 		}
 	}
 

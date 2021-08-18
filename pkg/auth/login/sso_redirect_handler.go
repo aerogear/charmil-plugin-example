@@ -13,9 +13,9 @@ import (
 	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/auth/token"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/iostreams"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 )
@@ -44,8 +44,8 @@ type redirectPageHandler struct {
 // nolint:funlen
 func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	callbackURL := fmt.Sprintf("%v%v", h.ServerAddr, r.URL.String())
-	h.Logger.Debug("Redirected to callback URL:", callbackURL)
-	h.Logger.Debug()
+	h.Logger.Infoln("Redirected to callback URL:", callbackURL)
+	h.Logger.Infoln()
 
 	if r.URL.Query().Get("state") != h.State {
 		http.Error(w, "state did not match", http.StatusBadRequest)
@@ -90,12 +90,12 @@ func (h *redirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		username = "unknown"
 	}
 
-	pageTitle := h.Localizer.MustLocalize("login.redirectPage.title")
-	pageBody := h.Localizer.MustLocalize("login.redirectPage.body", localize.NewEntry("Username", username))
+	pageTitle := h.Localizer.LocalizeByID("login.redirectPage.title")
+	pageBody := h.Localizer.LocalizeByID("login.redirectPage.body", localize.NewEntry("Username", username))
 
 	issuerURL, realm, ok := connection.SplitKeycloakRealmURL(h.AuthURL)
 	if !ok {
-		h.Logger.Error(h.Localizer.MustLocalize("login.error.noRealmInURL"))
+		h.Logger.Error(h.Localizer.LocalizeByID("login.error.noRealmInURL"))
 		os.Exit(1)
 	}
 	redirectPage := fmt.Sprintf(ssoRedirectHTMLPage, pageTitle, pageTitle, pageBody, issuerURL, realm, h.ClientID)

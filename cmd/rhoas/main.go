@@ -6,8 +6,9 @@ import (
 	"os"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/doc"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"golang.org/x/text/language"
 
 	"github.com/aerogear/charmil-plugin-example/internal/build"
 
@@ -24,7 +25,13 @@ var cmdFactory *factory.Factory
 var buildVersion string
 
 func main() {
-	localizer, err := goi18n.New(nil)
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
+
+	localizer, err := localize.New(locConfig)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -40,7 +47,7 @@ func main() {
 
 	err = initConfig(cmdFactory)
 	if err != nil {
-		logger.Errorf(localizer.MustLocalize("main.config.error", localize.NewEntry("Error", err)))
+		logger.Errorf(localizer.LocalizeByID("main.config.error", localize.NewEntry("Error", err)))
 		os.Exit(1)
 	}
 
@@ -126,5 +133,5 @@ func initConfig(f *factory.Factory) error {
 }
 
 func wrapErrorf(err error, localizer localize.Localizer) error {
-	return fmt.Errorf("Error: %w. %v", err, localizer.MustLocalize("common.log.error.verboseModeHint"))
+	return fmt.Errorf("Error: %w. %v", err, localizer.LocalizeByID("common.log.error.verboseModeHint"))
 }

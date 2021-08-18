@@ -8,9 +8,9 @@ import (
 
 	flagutil "github.com/aerogear/charmil-plugin-example/pkg/cmdutil/flags"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/iostreams"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/flag"
 
@@ -45,9 +45,9 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "describe",
-		Short:   f.Localizer.MustLocalize("registry.cmd.describe.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.describe.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.describe.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.describe.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.describe.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.describe.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			validOutputFormats := flagutil.ValidOutputFormats
@@ -60,7 +60,7 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if opts.name != "" && opts.id != "" {
-				return errors.New(opts.localizer.MustLocalize("service.error.idAndNameCannotBeUsed"))
+				return errors.New(opts.localizer.LocalizeByID("service.error.idAndNameCannotBeUsed"))
 			}
 
 			if opts.id != "" || opts.name != "" {
@@ -74,7 +74,7 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 
 			var registryConfig *config.ServiceRegistryConfig
 			if cfg.Services.ServiceRegistry == registryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
-				return errors.New(opts.localizer.MustLocalize("registry.common.error.noServiceSelected"))
+				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
 			opts.id = cfg.Services.ServiceRegistry.InstanceID
@@ -83,8 +83,8 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("registry.common.flag.id"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("registry.common.flag.id"))
 
 	flagutil.EnableOutputFlagCompletion(cmd)
 

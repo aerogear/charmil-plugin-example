@@ -6,13 +6,13 @@ import (
 	"fmt"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/iostreams"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
 
 	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 	srsmgmtv1 "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"
 	"github.com/spf13/cobra"
 )
@@ -40,29 +40,29 @@ func NewUseCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "use",
-		Short:   f.Localizer.MustLocalize("registry.cmd.use.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.use.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.use.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.use.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.use.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.use.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 0 {
 				opts.name = args[0]
 			} else if opts.id == "" {
 				if !opts.IO.CanPrompt() {
-					return errors.New(opts.localizer.MustLocalize("registry.use.error.idOrNameRequired"))
+					return errors.New(opts.localizer.LocalizeByID("registry.use.error.idOrNameRequired"))
 				}
 				opts.interactive = true
 			}
 
 			if opts.name != "" && opts.id != "" {
-				return errors.New(opts.localizer.MustLocalize("service.error.idAndNameCannotBeUsed"))
+				return errors.New(opts.localizer.LocalizeByID("service.error.idAndNameCannotBeUsed"))
 			}
 
 			return runUse(opts)
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("registry.use.flag.id"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("registry.use.flag.id"))
 
 	return cmd
 }
@@ -119,11 +119,11 @@ func runUse(opts *Options) error {
 	nameTmplEntry := localize.NewEntry("Name", registry.GetName())
 	cfg.Services.ServiceRegistry = registryConfig
 	if err := opts.Config.Save(cfg); err != nil {
-		saveErrMsg := opts.localizer.MustLocalize("registry.use.error.saveError", nameTmplEntry)
+		saveErrMsg := opts.localizer.LocalizeByID("registry.use.error.saveError", nameTmplEntry)
 		return fmt.Errorf("%v: %w", saveErrMsg, err)
 	}
 
-	logger.Info(opts.localizer.MustLocalize("registry.use.log.info.useSuccess", nameTmplEntry))
+	logger.Info(opts.localizer.LocalizeByID("registry.use.log.info.useSuccess", nameTmplEntry))
 
 	return nil
 }
@@ -139,7 +139,7 @@ func runInteractivePrompt(opts *Options) error {
 		return err
 	}
 
-	logger.Debug(opts.localizer.MustLocalize("common.log.debug.startingInteractivePrompt"))
+	logger.Infoln(opts.localizer.LocalizeByID("common.log.debug.startingInteractivePrompt"))
 
 	selectedRegistry, err := serviceregistry.InteractiveSelect(connection, logger)
 	if err != nil {

@@ -12,14 +12,21 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize/goi18n"
+	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
+	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
+	"golang.org/x/text/language"
 )
 
 func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
+	locConfig := &localize.Config{
+		Language: &language.English,
+		Files:    localesettings.DefaultLocales,
+		Format:   "toml",
+	}
 
-	localizer, err := goi18n.New(nil)
+	localizer, err := localize.New(locConfig)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -31,9 +38,9 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),
-		Short:       profile.ApplyDevPreviewLabel(f.Localizer.MustLocalize("registry.cmd.shortDescription")),
-		Long:        f.Localizer.MustLocalize("registry.cmd.longDescription"),
-		Example:     f.Localizer.MustLocalize("registry.cmd.example"),
+		Short:       profile.ApplyDevPreviewLabel(f.Localizer.LocalizeByID("registry.cmd.shortDescription")),
+		Long:        f.Localizer.LocalizeByID("registry.cmd.longDescription"),
+		Example:     f.Localizer.LocalizeByID("registry.cmd.example"),
 		Args:        cobra.MinimumNArgs(1),
 	}
 

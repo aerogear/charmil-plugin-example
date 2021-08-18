@@ -12,9 +12,9 @@ import (
 
 	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/auth/token"
-	"github.com/aerogear/charmil-plugin-example/pkg/iostreams"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
 )
@@ -44,8 +44,8 @@ func (h *masRedirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	logger := h.Logger
 
 	callbackURL := fmt.Sprintf("%v%v", h.ServerAddr, r.URL.String())
-	logger.Debug("Redirected to callback URL:", callbackURL)
-	logger.Debug()
+	logger.Infoln("Redirected to callback URL:", callbackURL)
+	logger.Infoln()
 
 	if r.URL.Query().Get("state") != h.State {
 		http.Error(w, "state did not match", http.StatusBadRequest)
@@ -87,8 +87,8 @@ func (h *masRedirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 		rawUsername = fmt.Sprintf("%v", userName)
 	}
 
-	pageTitle := h.Localizer.MustLocalize("login.redirectPage.title")
-	pageBody := h.Localizer.MustLocalize("login.masRedirectPage.body", localize.NewEntry("Host", h.AuthURL.Host), localize.NewEntry("Username", rawUsername))
+	pageTitle := h.Localizer.LocalizeByID("login.redirectPage.title")
+	pageBody := h.Localizer.LocalizeByID("login.masRedirectPage.body", localize.NewEntry("Host", h.AuthURL.Host), localize.NewEntry("Username", rawUsername))
 
 	redirectPage := fmt.Sprintf(masSSOredirectHTMLPage, pageTitle, pageTitle, pageBody)
 

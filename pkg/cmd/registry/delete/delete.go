@@ -6,12 +6,12 @@ import (
 	"fmt"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/localize"
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry"
+	"github.com/aerogear/charmil/core/utils/localize"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/iostreams"
+	"github.com/aerogear/charmil/core/utils/iostreams"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-plugin-example/internal/config"
@@ -45,9 +45,9 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:     "delete",
-		Short:   f.Localizer.MustLocalize("registry.cmd.delete.shortDescription"),
-		Long:    f.Localizer.MustLocalize("registry.cmd.delete.longDescription"),
-		Example: f.Localizer.MustLocalize("registry.cmd.delete.example"),
+		Short:   f.Localizer.LocalizeByID("registry.cmd.delete.shortDescription"),
+		Long:    f.Localizer.LocalizeByID("registry.cmd.delete.longDescription"),
+		Example: f.Localizer.LocalizeByID("registry.cmd.delete.example"),
 		Args:    cobra.RangeArgs(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if !opts.IO.CanPrompt() && !opts.force {
@@ -59,7 +59,7 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			if opts.name != "" && opts.id != "" {
-				return errors.New(opts.localizer.MustLocalize("service.error.idAndNameCannotBeUsed"))
+				return errors.New(opts.localizer.LocalizeByID("service.error.idAndNameCannotBeUsed"))
 			}
 
 			if opts.id != "" || opts.name != "" {
@@ -73,7 +73,7 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 
 			var serviceRegistryConfig *config.ServiceRegistryConfig
 			if cfg.Services.ServiceRegistry == serviceRegistryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
-				return errors.New(opts.localizer.MustLocalize("registry.common.error.noServiceSelected"))
+				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
 			opts.id = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
@@ -82,8 +82,8 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.MustLocalize("registry.common.flag.id"))
-	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.MustLocalize("registry.common.flag.yes"))
+	cmd.Flags().StringVar(&opts.id, "id", "", opts.localizer.LocalizeByID("registry.common.flag.id"))
+	cmd.Flags().BoolVarP(&opts.force, "yes", "y", false, opts.localizer.LocalizeByID("registry.common.flag.yes"))
 
 	return cmd
 }
@@ -121,12 +121,12 @@ func runDelete(opts *options) error {
 	}
 
 	registryName := registry.GetName()
-	logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.deletingService", localize.NewEntry("Name", registryName)))
+	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deletingService", localize.NewEntry("Name", registryName)))
 	logger.Info("")
 
 	if !opts.force {
 		promptConfirmName := &survey.Input{
-			Message: opts.localizer.MustLocalize("registry.delete.input.confirmName.message"),
+			Message: opts.localizer.LocalizeByID("registry.delete.input.confirmName.message"),
 		}
 
 		var confirmedName string
@@ -136,12 +136,12 @@ func runDelete(opts *options) error {
 		}
 
 		if confirmedName != registryName {
-			logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.incorrectNameConfirmation"))
+			logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.incorrectNameConfirmation"))
 			return nil
 		}
 	}
 
-	logger.Debug("Deleting Service registry", fmt.Sprintf("\"%s\"", registryName))
+	logger.Infoln("Deleting Service registry", fmt.Sprintf("\"%s\"", registryName))
 
 	a := api.ServiceRegistryMgmt().DeleteRegistry(context.Background(), registry.GetId())
 	_, err = a.Execute()
@@ -150,7 +150,7 @@ func runDelete(opts *options) error {
 		return err
 	}
 
-	logger.Info(opts.localizer.MustLocalize("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
+	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
 
 	currentContextRegistry := cfg.Services.ServiceRegistry
 	// this is not the current cluster, our work here is done
