@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aerogear/charmil-plugin-example/internal/build"
-	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/create"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/delete"
@@ -27,6 +25,12 @@ import (
 )
 
 func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Builder) *cobra.Command {
+	cfgFile, err := f.Config.Load()
+	if err != nil {
+		fmt.Println(f.IOStreams.ErrOut, err)
+		os.Exit(1)
+	}
+
 	locConfig := &localize.Config{
 		Language: &language.English,
 		Files:    localesettings.DefaultLocales,
@@ -39,16 +43,9 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 		os.Exit(1)
 	}
 
-	cmdFactory := factory.New(build.Version, localizer)
-	f.Localizer = cmdFactory.Localizer
+	f.Localizer = localizer
 
-	err = initConfig(cmdFactory)
-	if err != nil {
-		fmt.Print(localizer.LocalizeByID("main.config.error", localize.NewEntry("Error", err)))
-		os.Exit(1)
-	}
-
-	cmdFactory.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
+	f.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
 
 		var logger logging.Logger
 
@@ -79,53 +76,25 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),
-		Short:       profile.ApplyDevPreviewLabel(cmdFactory.Localizer.LocalizeByID("registry.cmd.shortDescription")),
-		Long:        cmdFactory.Localizer.LocalizeByID("registry.cmd.longDescription"),
-		Example:     cmdFactory.Localizer.LocalizeByID("registry.cmd.example"),
+		Short:       profile.ApplyDevPreviewLabel(f.Localizer.LocalizeByID("registry.cmd.shortDescription")),
+		Long:        f.Localizer.LocalizeByID("registry.cmd.longDescription"),
+		Example:     f.Localizer.LocalizeByID("registry.cmd.example"),
 		Args:        cobra.MinimumNArgs(1),
 	}
 
 	// add sub-commands
 	cmd.AddCommand(
-		create.NewCreateCommand(cmdFactory),
-		describe.NewDescribeCommand(cmdFactory),
-		delete.NewDeleteCommand(cmdFactory),
-		list.NewListCommand(cmdFactory),
-		use.NewUseCommand(cmdFactory),
+		create.NewCreateCommand(f),
+		describe.NewDescribeCommand(f),
+		delete.NewDeleteCommand(f),
+		list.NewListCommand(f),
+		use.NewUseCommand(f),
 	)
 
-	return cmd
-}
-
-func initConfig(f *factory.Factory) error {
-	if !config.HasCustomLocation() {
-		rhoasCfgDir, err := config.DefaultDir()
-		if err != nil {
-			return err
-		}
-
-		// create rhoas config directory
-		if _, err = os.Stat(rhoasCfgDir); os.IsNotExist(err) {
-			err = os.MkdirAll(rhoasCfgDir, 0o700)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	cfgFile, err := f.Config.Load()
-
-	if cfgFile != nil {
-		return err
-	}
-
-	if !os.IsNotExist(err) {
-		return err
-	}
-
-	cfgFile = &config.Config{}
 	if err := f.Config.Save(cfgFile); err != nil {
-		return err
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
-	return nil
+
+	return cmd
 }
