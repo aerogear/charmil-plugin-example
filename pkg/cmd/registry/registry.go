@@ -2,9 +2,7 @@
 package registry
 
 import (
-	"context"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
@@ -13,8 +11,6 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
-	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil-plugin-example/pkg/httputil"
 	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -22,7 +18,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Builder) *cobra.Command {
+func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	cfgFile, err := f.Config.Load()
 	if err != nil {
 		fmt.Println(f.IOStreams.ErrOut, err)
@@ -43,30 +39,30 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 
 	f.Localizer = localizer
 
-	f.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
+	// f.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
 
-		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
-			return &httputil.LoggingRoundTripper{
-				Proxied: a,
-			}
-		}
+	// 	transportWrapper := func(a http.RoundTripper) http.RoundTripper {
+	// 		return &httputil.LoggingRoundTripper{
+	// 			Proxied: a,
+	// 		}
+	// 	}
 
-		pluginBuilder.WithTransportWrapper(transportWrapper)
+	// 	pluginBuilder.WithTransportWrapper(transportWrapper)
 
-		pluginBuilder.WithConnectionConfig(connectionCfg)
+	// 	pluginBuilder.WithConnectionConfig(connectionCfg)
 
-		conn, err := pluginBuilder.Build()
-		if err != nil {
-			return nil, err
-		}
+	// 	conn, err := pluginBuilder.Build()
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
 
-		err = conn.RefreshTokens(context.TODO())
-		if err != nil {
-			return nil, err
-		}
+	// 	err = conn.RefreshTokens(context.TODO())
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
 
-		return conn, nil
-	}
+	// 	return conn, nil
+	// }
 
 	cmd := &cobra.Command{
 		Use:         "service-registry",

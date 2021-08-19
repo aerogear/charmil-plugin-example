@@ -3,9 +3,9 @@ package profile
 import (
 	"testing"
 
-	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/internal/mockutil"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil/core/utils/localize"
 	"golang.org/x/text/language"

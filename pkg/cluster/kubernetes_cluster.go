@@ -30,7 +30,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/aerogear/charmil-host-example/pkg/config"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 	"github.com/aerogear/charmil/core/utils/logging"
 )

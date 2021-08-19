@@ -14,8 +14,8 @@ import (
 
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/flag"
 
-	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/dump"
 	srsmgmtv1 "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"
 	"github.com/spf13/cobra"
@@ -73,11 +73,11 @@ func NewDescribeCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			var registryConfig *config.ServiceRegistryConfig
-			if cfg.Services.ServiceRegistry == registryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
+			if cfg.ServiceRegistry == registryConfig || cfg.ServiceRegistry.InstanceID == "" {
 				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = cfg.Services.ServiceRegistry.InstanceID
+			opts.id = cfg.ServiceRegistry.InstanceID
 
 			return runDescribe(opts)
 		},
