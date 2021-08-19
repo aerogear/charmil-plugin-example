@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/aerogear/charmil-plugin-example/internal/build"
+	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/create"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/delete"
@@ -35,6 +36,12 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	cmdFactory := factory.New(build.Version, localizer)
 	f.Localizer = cmdFactory.Localizer
 
+	err = initConfig(cmdFactory)
+	if err != nil {
+		fmt.Print(localizer.LocalizeByID("main.config.error", localize.NewEntry("Error", err)))
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),
@@ -54,4 +61,37 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	)
 
 	return cmd
+}
+
+func initConfig(f *factory.Factory) error {
+	if !config.HasCustomLocation() {
+		rhoasCfgDir, err := config.DefaultDir()
+		if err != nil {
+			return err
+		}
+
+		// create rhoas config directory
+		if _, err = os.Stat(rhoasCfgDir); os.IsNotExist(err) {
+			err = os.MkdirAll(rhoasCfgDir, 0o700)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	cfgFile, err := f.Config.Load()
+
+	if cfgFile != nil {
+		return err
+	}
+
+	if !os.IsNotExist(err) {
+		return err
+	}
+
+	cfgFile = &config.Config{}
+	if err := f.Config.Save(cfgFile); err != nil {
+		return err
+	}
+	return nil
 }
