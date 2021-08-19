@@ -4,6 +4,7 @@ package registry
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/aerogear/charmil-plugin-example/internal/build"
@@ -15,11 +16,14 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
+	"github.com/aerogear/charmil-plugin-example/pkg/httputil"
 	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/language"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Builder) *cobra.Command {
@@ -44,7 +48,21 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 		os.Exit(1)
 	}
 
-	cmdFactory.Connection = func(cfg *connection.Config) (connection.Connection, error) {
+	cmdFactory.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
+
+		var logger logging.Logger
+
+		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
+			return &httputil.LoggingRoundTripper{
+				Proxied: a,
+				Logger:  logger,
+			}
+		}
+
+		pluginBuilder.WithTransportWrapper(transportWrapper)
+
+		pluginBuilder.WithConnectionConfig(connectionCfg)
+
 		conn, err := pluginBuilder.Build()
 		if err != nil {
 			return nil, err
