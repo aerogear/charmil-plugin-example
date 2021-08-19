@@ -61,19 +61,19 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 	cmd := &cobra.Command{
 		Use:         "service-registry",
 		Annotations: profile.DevPreviewAnnotation(),
-		Short:       profile.ApplyDevPreviewLabel(f.Localizer.LocalizeByID("registry.cmd.shortDescription")),
-		Long:        f.Localizer.LocalizeByID("registry.cmd.longDescription"),
-		Example:     f.Localizer.LocalizeByID("registry.cmd.example"),
+		Short:       profile.ApplyDevPreviewLabel(cmdFactory.Localizer.LocalizeByID("registry.cmd.shortDescription")),
+		Long:        cmdFactory.Localizer.LocalizeByID("registry.cmd.longDescription"),
+		Example:     cmdFactory.Localizer.LocalizeByID("registry.cmd.example"),
 		Args:        cobra.MinimumNArgs(1),
 	}
 
 	// add sub-commands
 	cmd.AddCommand(
-		create.NewCreateCommand(f),
-		describe.NewDescribeCommand(f),
-		delete.NewDeleteCommand(f),
-		list.NewListCommand(f),
-		use.NewUseCommand(f),
+		create.NewCreateCommand(cmdFactory),
+		describe.NewDescribeCommand(cmdFactory),
+		delete.NewDeleteCommand(cmdFactory),
+		list.NewListCommand(cmdFactory),
+		use.NewUseCommand(cmdFactory),
 	)
 
 	return cmd
