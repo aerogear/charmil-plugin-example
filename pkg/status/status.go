@@ -9,7 +9,7 @@ import (
 
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 
-	"github.com/aerogear/charmil-plugin-example/internal/config"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil/core/utils/logging"
 	"github.com/openconfig/goyang/pkg/indent"
 )

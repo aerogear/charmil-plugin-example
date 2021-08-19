@@ -25,9 +25,9 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 
-	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmdutil"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 )
 
 type Options struct {

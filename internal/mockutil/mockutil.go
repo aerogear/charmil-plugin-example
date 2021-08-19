@@ -6,8 +6,8 @@ import (
 
 	kafkamgmtclient "github.com/redhat-developer/app-services-sdk-go/kafkamgmt/apiv1/client"
 
-	"github.com/aerogear/charmil-plugin-example/internal/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/api"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 )
 
