@@ -14,9 +14,9 @@ import (
 	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/spf13/cobra"
 
 	srsmgmtv1client "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"
@@ -72,11 +72,11 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 			}
 
 			var serviceRegistryConfig *config.ServiceRegistryConfig
-			if cfg.ServiceRegistry == serviceRegistryConfig || cfg.ServiceRegistry.InstanceID == "" {
+			if cfg.Services.ServiceRegistry == serviceRegistryConfig || cfg.Services.ServiceRegistry.InstanceID == "" {
 				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = fmt.Sprint(cfg.ServiceRegistry.InstanceID)
+			opts.id = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
 
 			return runDelete(opts)
 		},
@@ -152,7 +152,7 @@ func runDelete(opts *options) error {
 
 	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
 
-	currentContextRegistry := cfg.ServiceRegistry
+	currentContextRegistry := cfg.Services.ServiceRegistry
 	// this is not the current cluster, our work here is done
 	if currentContextRegistry == nil || currentContextRegistry.InstanceID != opts.id {
 		return nil
@@ -160,7 +160,7 @@ func runDelete(opts *options) error {
 
 	// the service that was deleted is set as the user's current cluster
 	// since it was deleted it should be removed from the config
-	cfg.ServiceRegistry = nil
+	cfg.Services.ServiceRegistry = nil
 	err = opts.Config.Save(cfg)
 	if err != nil {
 		return err

@@ -20,8 +20,6 @@ import (
 	"github.com/aerogear/charmil/core/utils/localize"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/language"
-
-	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Builder) *cobra.Command {
@@ -47,12 +45,9 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Bui
 
 	f.Connection = func(connectionCfg *connection.Config) (connection.Connection, error) {
 
-		var logger logging.Logger
-
 		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
 			return &httputil.LoggingRoundTripper{
 				Proxied: a,
-				Logger:  logger,
 			}
 		}
 
