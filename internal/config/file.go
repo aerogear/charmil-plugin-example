@@ -86,13 +86,13 @@ func (c *File) Location() (path string, err error) {
 	if rhoasConfig := os.Getenv(EnvName); rhoasConfig != "" {
 		path = rhoasConfig
 	} else {
-		rhoasCfgDir, err := DefaultDir()
-		if err != nil {
-			return "", err
+		rhoasCfgDir, e := DefaultDir()
+		if e != nil {
+			return "", e
 		}
 		path = filepath.Join(rhoasCfgDir, "plugin_config.json")
-		if err != nil {
-			return "", err
+		if e != nil {
+			return "", e
 		}
 	}
 
