@@ -14,9 +14,9 @@ import (
 	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/spf13/cobra"
 
 	srsmgmtv1client "github.com/redhat-developer/app-services-sdk-go/registrymgmt/apiv1/client"
