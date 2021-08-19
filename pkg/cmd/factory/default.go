@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/internal/build"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/debug"
-	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 	"github.com/aerogear/charmil-plugin-example/pkg/httputil"
 
@@ -102,7 +102,7 @@ func New(cliVersion string, localizer localize.Localizer) *Factory {
 		transportWrapper := func(a http.RoundTripper) http.RoundTripper {
 			return &httputil.LoggingRoundTripper{
 				Proxied: a,
-				Logger:  logger,
+				// Logger:  logger,
 			}
 		}
 

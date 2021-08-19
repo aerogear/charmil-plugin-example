@@ -7,7 +7,7 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/aerogear/charmil/core/utils/localize"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/config"
+	"github.com/aerogear/charmil-host-example/pkg/config"
 	"github.com/aerogear/charmil/core/utils/iostreams"
 	"github.com/aerogear/charmil/core/utils/logging"
 
