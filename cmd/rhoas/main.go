@@ -58,17 +58,17 @@ func main() {
 		os.Exit(0)
 	}
 
+	if err = cmdFactory.Config.Save(cfgFile); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
 	err = RootCmd.Execute()
 	if err == nil {
 		if debug.Enabled() {
 			build.CheckForUpdate(context.Background(), logger, localizer)
 		}
 		return
-	}
-
-	if err = cmdFactory.Config.Save(cfgFile); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
 	}
 
 	if err != nil {
