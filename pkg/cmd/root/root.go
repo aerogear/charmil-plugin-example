@@ -3,8 +3,6 @@ package root
 import (
 	"flag"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry"
-
 	"github.com/aerogear/charmil-plugin-example/pkg/arguments"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/spf13/cobra"
@@ -34,7 +32,7 @@ func NewRootCommand(f *factory.Factory, version string) *cobra.Command {
 	// cmd.SetVersionTemplate(f.Localizer.LocalizeByID("version.cmd.outputText", localize.NewEntry("Version", build.Version)))
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 
-	cmd.AddCommand(registry.NewServiceRegistryCommand(f))
+	// cmd.AddCommand(registry.NewServiceRegistryCommand(f))
 
 	return cmd
 }

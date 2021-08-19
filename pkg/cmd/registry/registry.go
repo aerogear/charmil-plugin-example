@@ -2,6 +2,7 @@
 package registry
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
+	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -20,7 +22,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
+func NewServiceRegistryCommand(f *factory.Factory, pluginBuilder *connection.Builder) *cobra.Command {
 	locConfig := &localize.Config{
 		Language: &language.English,
 		Files:    localesettings.DefaultLocales,
@@ -40,6 +42,20 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 	if err != nil {
 		fmt.Print(localizer.LocalizeByID("main.config.error", localize.NewEntry("Error", err)))
 		os.Exit(1)
+	}
+
+	cmdFactory.Connection = func(cfg *connection.Config) (connection.Connection, error) {
+		conn, err := pluginBuilder.Build()
+		if err != nil {
+			return nil, err
+		}
+
+		err = conn.RefreshTokens(context.TODO())
+		if err != nil {
+			return nil, err
+		}
+
+		return conn, nil
 	}
 
 	cmd := &cobra.Command{
