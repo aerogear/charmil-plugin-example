@@ -3,7 +3,6 @@ package use
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry"
@@ -23,7 +22,7 @@ type Options struct {
 	interactive bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -31,7 +30,7 @@ type Options struct {
 
 func NewUseCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -85,11 +84,6 @@ func runUse(opts *Options) error {
 		return err
 	}
 
-	cfg, err := opts.Config.Load()
-	if err != nil {
-		return err
-	}
-
 	connection, err := opts.Connection(connection.DefaultConfigSkipMasAuth)
 	if err != nil {
 		return err
@@ -111,17 +105,10 @@ func runUse(opts *Options) error {
 		}
 	}
 
-	registryConfig := &config.ServiceRegistryConfig{
-		InstanceID: registry.GetId(),
-		Name:       *registry.Name,
-	}
-
 	nameTmplEntry := localize.NewEntry("Name", registry.GetName())
-	cfg.ServiceRegistry = registryConfig
-	if err := opts.Config.Save(cfg); err != nil {
-		saveErrMsg := opts.localizer.LocalizeByID("registry.use.error.saveError", nameTmplEntry)
-		return fmt.Errorf("%v: %w", saveErrMsg, err)
-	}
+
+	opts.CfgHandler.Cfg.InstanceID = registry.GetId()
+	opts.CfgHandler.Cfg.Name = *registry.Name
 
 	logger.Info(opts.localizer.LocalizeByID("registry.use.log.info.useSuccess", nameTmplEntry))
 

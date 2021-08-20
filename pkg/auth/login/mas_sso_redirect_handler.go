@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/auth/token"
 	"github.com/aerogear/charmil-plugin-example/pkg/config"
@@ -25,7 +24,7 @@ var masSSOredirectHTMLPage string
 // handler for the MAS-SSO redirect page
 type masRedirectPageHandler struct {
 	IO            *iostreams.IOStreams
-	Config        config.IConfig
+	CfgHandler    *config.CfgHandler
 	Logger        logging.Logger
 	ServerAddr    string
 	Port          int
@@ -96,19 +95,9 @@ func (h *masRedirectPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, redirectPage)
 
-	cfg, err := h.Config.Load()
-	if err != nil {
-		logger.Error(err)
-		os.Exit(1)
-	}
 	// save the received tokens to the user's config
-	cfg.MasAccessToken = oauth2Token.AccessToken
-	cfg.MasRefreshToken = oauth2Token.RefreshToken
-
-	if err = h.Config.Save(cfg); err != nil {
-		logger.Error(err)
-		os.Exit(1)
-	}
+	h.CfgHandler.Cfg.MasAccessToken = oauth2Token.AccessToken
+	h.CfgHandler.Cfg.MasRefreshToken = oauth2Token.RefreshToken
 
 	h.CancelContext()
 }

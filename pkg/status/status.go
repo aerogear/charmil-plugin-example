@@ -29,7 +29,7 @@ type KafkaStatus struct {
 }
 
 type Options struct {
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     func() (logging.Logger, error)
 	Connection connection.Connection
 
