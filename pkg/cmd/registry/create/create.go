@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -39,7 +38,7 @@ type Options struct {
 	interactive bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -49,7 +48,7 @@ type Options struct {
 func NewCreateCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,
@@ -96,11 +95,6 @@ func NewCreateCommand(f *factory.Factory) *cobra.Command {
 // nolint:funlen
 func runCreate(opts *Options) error {
 	logger, err := opts.Logger()
-	if err != nil {
-		return err
-	}
-
-	cfg, err := opts.Config.Load()
 	if err != nil {
 		return err
 	}
@@ -164,10 +158,7 @@ func runCreate(opts *Options) error {
 
 	if opts.autoUse {
 		logger.Infoln("Auto-use is set, updating the current instance")
-		cfg.ServiceRegistry = registryConfig
-		if err := opts.Config.Save(cfg); err != nil {
-			return fmt.Errorf("%v: %w", opts.localizer.LocalizeByID("registry.cmd.create.error.couldNotUse"), err)
-		}
+		opts.CfgHandler.Cfg.ServiceRegistry = registryConfig
 	} else {
 		logger.Infoln("Auto-use is not set, skipping updating the current instance")
 	}

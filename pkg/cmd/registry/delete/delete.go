@@ -28,7 +28,7 @@ type options struct {
 	force bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -36,7 +36,7 @@ type options struct {
 
 func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 	opts := &options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -66,17 +66,12 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 				return runDelete(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			var serviceRegistryConfig *config.ServiceRegistryConfig
-			if cfg.ServiceRegistry == serviceRegistryConfig || cfg.ServiceRegistry.InstanceID == "" {
+			if opts.CfgHandler.Cfg.ServiceRegistry == serviceRegistryConfig || opts.CfgHandler.Cfg.ServiceRegistry.InstanceID == "" {
 				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = fmt.Sprint(cfg.ServiceRegistry.InstanceID)
+			opts.id = fmt.Sprint(opts.CfgHandler.Cfg.ServiceRegistry.InstanceID)
 
 			return runDelete(opts)
 		},
@@ -90,11 +85,6 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 
 func runDelete(opts *options) error {
 	logger, err := opts.Logger()
-	if err != nil {
-		return err
-	}
-
-	cfg, err := opts.Config.Load()
 	if err != nil {
 		return err
 	}
@@ -152,7 +142,7 @@ func runDelete(opts *options) error {
 
 	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
 
-	currentContextRegistry := cfg.ServiceRegistry
+	currentContextRegistry := opts.CfgHandler.Cfg.ServiceRegistry
 	// this is not the current cluster, our work here is done
 	if currentContextRegistry == nil || currentContextRegistry.InstanceID != opts.id {
 		return nil
@@ -160,11 +150,7 @@ func runDelete(opts *options) error {
 
 	// the service that was deleted is set as the user's current cluster
 	// since it was deleted it should be removed from the config
-	cfg.ServiceRegistry = nil
-	err = opts.Config.Save(cfg)
-	if err != nil {
-		return err
-	}
+	opts.CfgHandler.Cfg.ServiceRegistry = nil
 
 	return nil
 }

@@ -16,18 +16,18 @@ import (
 )
 
 type Options struct {
-	IO        *iostreams.IOStreams
-	Config    config.IConfig
-	Logger    func() (logging.Logger, error)
-	localizer localize.Localizer
+	IO         *iostreams.IOStreams
+	CfgHandler *config.CfgHandler
+	Logger     func() (logging.Logger, error)
+	localizer  localize.Localizer
 }
 
 func NewConfigCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		IO:        f.IOStreams,
-		Config:    f.Config,
-		Logger:    f.Logger,
-		localizer: f.Localizer,
+		IO:         f.IOStreams,
+		CfgHandler: f.CfgHandler,
+		Logger:     f.Logger,
+		localizer:  f.Localizer,
 	}
 
 	cmd := &cobra.Command{

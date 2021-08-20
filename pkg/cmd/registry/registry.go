@@ -19,11 +19,6 @@ import (
 )
 
 func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
-	cfgFile, err := f.Config.Load()
-	if err != nil {
-		fmt.Println(f.IOStreams.ErrOut, err)
-		os.Exit(1)
-	}
 
 	locConfig := &localize.Config{
 		Language: &language.English,
@@ -81,11 +76,6 @@ func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 		list.NewListCommand(f),
 		use.NewUseCommand(f),
 	)
-
-	if err := f.Config.Save(cfgFile); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
 
 	return cmd
 }
