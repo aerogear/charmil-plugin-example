@@ -66,12 +66,12 @@ func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 				return runDelete(opts)
 			}
 
-			var serviceRegistryConfig *config.ServiceRegistryConfig
-			if opts.CfgHandler.Cfg.ServiceRegistry == serviceRegistryConfig || opts.CfgHandler.Cfg.ServiceRegistry.InstanceID == "" {
+			var serviceRegistryConfig *config.Config
+			if opts.CfgHandler.Cfg == serviceRegistryConfig || opts.CfgHandler.Cfg.InstanceID == "" {
 				return errors.New(opts.localizer.LocalizeByID("registry.common.error.noServiceSelected"))
 			}
 
-			opts.id = fmt.Sprint(opts.CfgHandler.Cfg.ServiceRegistry.InstanceID)
+			opts.id = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 
 			return runDelete(opts)
 		},
@@ -142,7 +142,7 @@ func runDelete(opts *options) error {
 
 	logger.Info(opts.localizer.LocalizeByID("registry.delete.log.info.deleteSuccess", localize.NewEntry("Name", registryName)))
 
-	currentContextRegistry := opts.CfgHandler.Cfg.ServiceRegistry
+	currentContextRegistry := opts.CfgHandler.Cfg
 	// this is not the current cluster, our work here is done
 	if currentContextRegistry == nil || currentContextRegistry.InstanceID != opts.id {
 		return nil
@@ -150,7 +150,7 @@ func runDelete(opts *options) error {
 
 	// the service that was deleted is set as the user's current cluster
 	// since it was deleted it should be removed from the config
-	opts.CfgHandler.Cfg.ServiceRegistry = nil
+	opts.CfgHandler.Cfg = nil
 
 	return nil
 }

@@ -151,14 +151,11 @@ func runCreate(opts *Options) error {
 		_ = dump.YAML(opts.IO.Out, data)
 	}
 
-	registryConfig := &config.ServiceRegistryConfig{
-		InstanceID: response.GetId(),
-		Name:       response.GetName(),
-	}
-
 	if opts.autoUse {
 		logger.Infoln("Auto-use is set, updating the current instance")
-		opts.CfgHandler.Cfg.ServiceRegistry = registryConfig
+
+		opts.CfgHandler.Cfg.InstanceID = response.GetId()
+		opts.CfgHandler.Cfg.Name = response.GetName()
 	} else {
 		logger.Infoln("Auto-use is not set, skipping updating the current instance")
 	}

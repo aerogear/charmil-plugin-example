@@ -105,13 +105,10 @@ func runUse(opts *Options) error {
 		}
 	}
 
-	registryConfig := &config.ServiceRegistryConfig{
-		InstanceID: registry.GetId(),
-		Name:       *registry.Name,
-	}
-
 	nameTmplEntry := localize.NewEntry("Name", registry.GetName())
-	opts.CfgHandler.Cfg.ServiceRegistry = registryConfig
+
+	opts.CfgHandler.Cfg.InstanceID = registry.GetId()
+	opts.CfgHandler.Cfg.Name = *registry.Name
 
 	logger.Info(opts.localizer.LocalizeByID("registry.use.log.info.useSuccess", nameTmplEntry))
 
