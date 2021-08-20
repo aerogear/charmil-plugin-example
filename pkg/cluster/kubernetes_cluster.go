@@ -57,7 +57,7 @@ var serviceAccountSecretName = "rh-cloud-services-service-account"
 
 // NewKubernetesClusterConnection configures and connects to a Kubernetes cluster
 func NewKubernetesClusterConnection(connection connection.Connection,
-	CfgHandler *config.CfgHandler,
+	cfgHandler *config.CfgHandler,
 	logger logging.Logger,
 	kubeconfig string,
 	io *iostreams.IOStreams, localizer localize.Localizer) (Cluster, error) {
@@ -98,7 +98,7 @@ func NewKubernetesClusterConnection(connection connection.Connection,
 
 	k8sCluster := &KubernetesCluster{
 		connection,
-		CfgHandler,
+		cfgHandler,
 		logger,
 		clientset,
 		clientconfig,

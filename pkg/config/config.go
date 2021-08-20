@@ -147,9 +147,9 @@ func Unmarshal(in []byte, out interface{}, fileExt string) error {
 	return nil
 }
 
-// readFile reads the file specified by FilePath and returns its contents.
-func readFile(FilePath string) ([]byte, error) {
-	buf, err := ioutil.ReadFile(FilePath)
+// readFile reads the file specified by filePath and returns its contents.
+func readFile(filePath string) ([]byte, error) {
+	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
@@ -157,9 +157,9 @@ func readFile(FilePath string) ([]byte, error) {
 	return buf, nil
 }
 
-// writeFile writes data to the file specified by FilePath.
-func writeFile(FilePath string, data []byte) error {
-	err := ioutil.WriteFile(FilePath, data, 0600)
+// writeFile writes data to the file specified by filePath.
+func writeFile(filePath string, data []byte) error {
+	err := ioutil.WriteFile(filePath, data, 0600)
 	if err != nil {
 		return err
 	}
