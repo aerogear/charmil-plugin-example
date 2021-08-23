@@ -52,7 +52,7 @@ type Options struct {
 	limit int32
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -61,7 +61,7 @@ type Options struct {
 // NewListCommand creates a new command for listing registry artifacts.
 func NewListCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -96,16 +96,11 @@ rhoas service-registry artifact list --page=2 --limit=10
 				return runList(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasServiceRegistry() {
+			if !opts.CfgHandler.Cfg.HasServiceRegistry() {
 				return errors.New("no service Registry selected. Use rhoas registry use to select your registry")
 			}
 
-			opts.registryID = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.registryID = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 
 			return runList(opts)
 		},

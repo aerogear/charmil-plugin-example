@@ -28,7 +28,7 @@ type Options struct {
 	registryID string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Logger     func() (logging.Logger, error)
 	Connection factory.ConnectionFunc
 	localizer  localize.Localizer
@@ -37,7 +37,7 @@ type Options struct {
 // NewMetadataCommand creates a new command for fetching metadata for registry artifacts.
 func NewMetadataCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		IO:         f.IOStreams,
 		localizer:  f.Localizer,
@@ -68,16 +68,11 @@ rhoas service-registry artifact metadata --artifact-id=my-artifact --group mygro
 				return runGet(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasServiceRegistry() {
+			if !opts.CfgHandler.Cfg.HasServiceRegistry() {
 				return errors.New("no service registry selected. Please specify registry by using --instance-id flag")
 			}
 
-			opts.registryID = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.registryID = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 			return runGet(opts)
 		},
 	}

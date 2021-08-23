@@ -37,7 +37,7 @@ type Options struct {
 	outputFormat string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -73,7 +73,7 @@ when --instance-id is missing the command will create a new artifact for current
 func NewCreateCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,
@@ -105,27 +105,22 @@ rhoas service-registry artifact create --type=JSON my-artifact.json
 				return runCreate(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
 			if opts.artifactType != "" {
-				if _, err = registryinstanceclient.NewArtifactTypeFromValue(opts.artifactType); err != nil {
+				if _, err := registryinstanceclient.NewArtifactTypeFromValue(opts.artifactType); err != nil {
 					return errors.New("invalid artifact type. Please use one of following values: " + util.GetAllowedArtifactTypeEnumValuesAsString())
 				}
 			}
 
-			if !cfg.HasServiceRegistry() {
+			if !opts.CfgHandler.Cfg.HasServiceRegistry() {
 				return errors.New("no service Registry selected. Use 'rhoas service-registry use' use to select your registry")
 			}
 
-			opts.registryID = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.registryID = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 			return runCreate(opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
 	cmd.Flags().StringVar(&opts.file, "file", "", "File location of the artifact")
 
 	cmd.Flags().StringVarP(&opts.artifact, "artifact-id", "a", "", "Id of the artifact")

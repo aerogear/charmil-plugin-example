@@ -34,7 +34,7 @@ type Options struct {
 	outputFormat string
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -44,7 +44,7 @@ type Options struct {
 func NewUpdateCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
 		IO:         f.IOStreams,
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		localizer:  f.Localizer,
@@ -90,21 +90,16 @@ rhoas service-registry artifact update --artifact-id=my-artifact --group my-grou
 				return runUpdate(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasServiceRegistry() {
+			if !opts.CfgHandler.Cfg.HasServiceRegistry() {
 				return errors.New("no service Registry selected. Use 'rhoas service-registry use' use to select your registry")
 			}
 
-			opts.registryID = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.registryID = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 			return runUpdate(opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.MustLocalize("registry.cmd.flag.output.description"))
+	cmd.Flags().StringVarP(&opts.outputFormat, "output", "o", "json", opts.localizer.LocalizeByID("registry.cmd.flag.output.description"))
 	cmd.Flags().StringVarP(&opts.file, "file", "f", "", "File location of the artifact")
 
 	cmd.Flags().StringVarP(&opts.artifact, "artifact-id", "a", "", "Id of the artifact")

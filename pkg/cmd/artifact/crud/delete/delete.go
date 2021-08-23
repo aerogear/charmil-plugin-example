@@ -7,19 +7,18 @@ import (
 
 	flagutil "github.com/aerogear/charmil-plugin-example/pkg/cmdutil/flags"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/connection"
-	"github.com/aerogear/charmil/core/utils/localize"
-
 	"github.com/aerogear/charmil-plugin-example/pkg/serviceregistry/registryinstanceerror"
-	"github.com/aerogear/charmil/core/utils/iostreams"
 
-	"github.com/aerogear/charmil-plugin-example/pkg/logging"
+	"github.com/aerogear/charmil-plugin-example/pkg/config"
+	"github.com/aerogear/charmil-plugin-example/pkg/connection"
+	"github.com/aerogear/charmil/core/utils/iostreams"
+	"github.com/aerogear/charmil/core/utils/localize"
+	"github.com/aerogear/charmil/core/utils/logging"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/artifact/util"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/factory"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/flag"
-	"github.com/aerogear/charmil-plugin-example/pkg/config"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +30,7 @@ type Options struct {
 	force      bool
 
 	IO         *iostreams.IOStreams
-	Config     config.IConfig
+	CfgHandler *config.CfgHandler
 	Connection factory.ConnectionFunc
 	Logger     func() (logging.Logger, error)
 	localizer  localize.Localizer
@@ -39,7 +38,7 @@ type Options struct {
 
 func NewDeleteCommand(f *factory.Factory) *cobra.Command {
 	opts := &Options{
-		Config:     f.Config,
+		CfgHandler: f.CfgHandler,
 		Connection: f.Connection,
 		Logger:     f.Logger,
 		IO:         f.IOStreams,
@@ -73,16 +72,11 @@ rhoas service-registry artifact delete --artifact-id=my-artifact
 				return runDelete(opts)
 			}
 
-			cfg, err := opts.Config.Load()
-			if err != nil {
-				return err
-			}
-
-			if !cfg.HasServiceRegistry() {
+			if !opts.CfgHandler.Cfg.HasServiceRegistry() {
 				return errors.New("no service Registry selected. Use 'rhoas service-registry use' use to select your registry")
 			}
 
-			opts.registryID = fmt.Sprint(cfg.Services.ServiceRegistry.InstanceID)
+			opts.registryID = fmt.Sprint(opts.CfgHandler.Cfg.InstanceID)
 			return runDelete(opts)
 		},
 	}
