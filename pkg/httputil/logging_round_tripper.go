@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+
+	"github.com/aerogear/charmil/core/utils/logging"
 )
 
 // LoggingRoundTripper implements http.RoundTripper. When set as Transport of http.Client, it executes HTTP requests with logging.
 type LoggingRoundTripper struct {
 	Proxied http.RoundTripper
-	// Logger  logging.Logger
+	Logger  logging.Logger
 }
 
 // RoundTrip logs the http request and response in debug mode

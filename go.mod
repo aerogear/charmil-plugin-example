@@ -19,12 +19,15 @@ require (
 	github.com/pelletier/go-toml v1.9.3
 	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
 	github.com/pkg/errors v0.9.1
-	github.com/redhat-developer/app-services-sdk-go v0.9.4
+	github.com/redhat-developer/app-services-sdk-go/kafkainstance v0.2.0
+	github.com/redhat-developer/app-services-sdk-go/kafkamgmt v0.3.2
+	github.com/redhat-developer/app-services-sdk-go/registryinstance v0.1.1
+	github.com/redhat-developer/app-services-sdk-go/registrymgmt v0.1.1
 	github.com/redhat-developer/service-binding-operator v0.8.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
 	gitlab.com/c0b/go-ordered-json v0.0.0-20201030195603-febf46534d5a
-	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
+	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
 	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.22.0
