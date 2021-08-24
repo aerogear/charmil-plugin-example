@@ -11,7 +11,6 @@ import (
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/describe"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/list"
 	"github.com/aerogear/charmil-plugin-example/pkg/cmd/registry/use"
-	"github.com/aerogear/charmil-plugin-example/pkg/connection"
 	"github.com/aerogear/charmil-plugin-example/pkg/localesettings"
 	"github.com/aerogear/charmil-plugin-example/pkg/profile"
 	"github.com/aerogear/charmil/core/utils/localize"
@@ -19,7 +18,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func NewServiceRegistryCommand(f *factory.Factory, pluginConnection func(connectionCfg *connection.Config) (connection.Connection, error)) *cobra.Command {
+func NewServiceRegistryCommand(f *factory.Factory) *cobra.Command {
 
 	locConfig := &localize.Config{
 		Language: &language.English,
@@ -34,7 +33,6 @@ func NewServiceRegistryCommand(f *factory.Factory, pluginConnection func(connect
 	}
 
 	f.Localizer = localizer
-	f.Connection = pluginConnection
 
 	cmd := &cobra.Command{
 		Use:         "service-registry",
